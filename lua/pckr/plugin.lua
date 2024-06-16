@@ -160,6 +160,14 @@ local function normconfig(x)
   return x
 end
 
+--- @param plugin Pckr.Plugin
+--- @param required_by? Pckr.Plugin
+local function add_required_by(plugin, required_by)
+  if required_by then
+    table.insert(plugin.required_by, required_by.name)
+  end
+end
+
 --- @param spec0 string|Pckr.UserSpec
 --- @param required_by? Pckr.Plugin
 --- @return string?, Pckr.Plugin?
@@ -186,6 +194,7 @@ local function process_spec_item(spec0, required_by)
   if existing then
     if simple then
       log.debug('Ignoring simple plugin spec' .. name)
+      add_required_by(existing, required_by)
       return name, existing
     else
       if not existing.simple then
@@ -228,7 +237,7 @@ local function process_spec_item(spec0, required_by)
     config_pre = normconfig(spec.config_pre),
     config = normconfig(spec.config),
     revs = {},
-    required_by = required_by and { required_by.name } or nil,
+    required_by = required_by and { required_by.name } or {},
     added = not required_by,
   }
 
@@ -236,8 +245,7 @@ local function process_spec_item(spec0, required_by)
     plugin._dir = psuedo_path
   end
 
-  if existing and existing.required_by then
-    plugin.required_by = plugin.required_by or {}
+  if existing and #existing.required_by > 0 then
     vim.list_extend(plugin.required_by, existing.required_by)
   end
 
