@@ -14,8 +14,14 @@ return function(mode, key, rhs, opts)
     opts.silent = true
   end
 
-  rhs = rhs
-    or function()
+  --- @param loader fun()
+  return function(loader)
+    local rhs_func = function()
+      -- TODO(epheien): run rhs
+      -- TODO(lewis6991): detect is mapping already exists
+      -- TODO(Zhou-Yicheng): delete mapping if exists
+      vim.keymap.del(mode, key)
+      loader()
       if mode == 'n' then
         vim.api.nvim_input(key)
       else
@@ -23,12 +29,6 @@ return function(mode, key, rhs, opts)
       end
     end
 
-  --- @param loader fun()
-  return function(loader)
-    -- TODO(lewis6991): detect is mapping already exists
-    -- TODO(Zhou-Yicheng): delete mapping if exists
-    -- vim.keymap.del(mode, key)
-    loader()
-    vim.keymap.set(mode, key, rhs, opts)
+    vim.keymap.set(mode, key, rhs_func, opts)
   end
 end
