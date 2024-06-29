@@ -4,8 +4,9 @@
 --- @param opts? vim.api.keyset.keymap
 --- @return fun(_: fun())
 return function(mode, key, rhs, opts)
-  opts = opts or {}
+  origin_opts = vim.deepcopy(opts)
 
+  opts = opts or {}
   if opts.desc == nil then
     opts.desc = 'pckr.nvim lazy load'
   end
@@ -17,15 +18,17 @@ return function(mode, key, rhs, opts)
   --- @param loader fun()
   return function(loader)
     local rhs_func = function()
-      -- TODO(epheien): run rhs
       -- TODO(lewis6991): detect is mapping already exists
       -- TODO(Zhou-Yicheng): delete mapping if exists
       vim.keymap.del(mode, key)
       loader()
+      if rhs then
+        vim.keymap.set(mode, key, rhs, origin_opts)
+      end
       if mode == 'n' then
         vim.api.nvim_input(key)
       else
-        vim.api.nvim_feedkeys(key, mode, false)
+        vim.api.nvim_feedkeys(key, '', false)
       end
     end
 
