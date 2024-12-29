@@ -212,8 +212,13 @@ local function process_spec_item(spec0, required_by)
     is_start = false
   end
 
-  local install_path_dir = is_start and config._start_dir or config._opt_dir
-  local install_path = util.join_paths(install_path_dir, name)
+  local install_path
+  if plugin_type == 'local' then
+    install_path = psuedo_path
+  else
+    local install_path_dir = is_start and config._start_dir or config._opt_dir
+    install_path = util.join_paths(install_path_dir, name)
+  end
 
   --- @type Pckr.Plugin
   local plugin = {
