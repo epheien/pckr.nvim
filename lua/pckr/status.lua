@@ -250,7 +250,7 @@ function M.run()
         tbl_flatten({
           get_load_state(plugin),
           plugin._profile,
-          get_update_state(plugin),
+          --get_update_state(plugin),
         }),
         ' '
       )
