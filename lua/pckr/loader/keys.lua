@@ -19,11 +19,7 @@ return function(mode, key, _rhs, opts)
       -- always delete the mapping immediately to prevent recursive mappings
       vim.keymap.del(mode, key, dopts)
       loader()
-      if mode == 'n' then
-        vim.api.nvim_input(key)
-      else
-        vim.api.nvim_feedkeys(key, '', false)
-      end
+      vim.api.nvim_input(key)
     end, opts)
   end
 end
